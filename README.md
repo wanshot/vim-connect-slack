@@ -39,15 +39,20 @@ Commands
   `:SlackSnippet {FileType} {Title}`
   * Default FileType is "Python"
   * Default Title is "None"
-   
+
+* Show Channel History
+
+  `:SlackHistory {Count}`
+  * Count is int
+ 
+
 * Show SlackChannels
 
-  `:SlackChannel`
+  `:SlackChannels`
 
 * Change Channel
 
    `:let Channel = "Target Channel ID"`
-
 
 
 

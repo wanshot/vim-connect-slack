@@ -24,7 +24,11 @@ python import vim
 function! slack#channel()
   python show_channels(vim.eval('s:Slack_info()'))
 endfunction
- 
+
+function! slack#history(args)
+  python show_history(vim.eval('s:Slack_info()'), vim.eval('a:args'))
+endfunction
+
 function! slack#slack(args)
   python post(vim.eval('s:Slack_info()'), vim.eval('a:args'))
 endfunction

@@ -10,6 +10,8 @@ class Slack:
     __delete = 'https://slack.com/api/chat.delete'
     __group_list_api_url = "https://slack.com/api/groups.list"
     __channel_list_api_url = "https://slack.com/api/channels.list"
+    __history_api_url = "https://slack.com/api/channels.history"
+    __user_info_api_url = "https://slack.com/api/users.info"
 
     def __init__(self):
         pass
@@ -63,6 +65,18 @@ class Slack:
         for info in json_data:
             print info.get("name") + " : " + info.get("id")
 
+    def history(self, info, count):
+        history_api_info = {
+            'token': info.get("token"),
+            'channel': info.get("channel"),
+            'count': count
+        }
+
+        res = requests.get(self.__history_api_url, params=history_api_info)
+
+        for info in res.json().get("messages"):
+            print info.get("user") + " : " + info.get("text")
+
 
 def post(info, text):
     """ Post """
@@ -77,3 +91,8 @@ def post_snippet(info, content, opt):
 def show_channels(info):
     """ Show SlackChannels  """
     return Slack().channel(info)
+
+
+def show_history(info, count):
+    """ Show Channel History """
+    return Slack().history(info, count)
