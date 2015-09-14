@@ -53,7 +53,7 @@ Commands
 
 * Show Current channel
 
-  `:Slackchannel`
+  `:SlackChannel`
 
 
 * Change Channel
