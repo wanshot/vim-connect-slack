@@ -31,7 +31,7 @@ class Slack:
             'unfurl_links': 'false'
         }
 
-        requests.post(self.__post_api_url, params=post_api_info)
+        return requests.post(self.__post_api_url, params=post_api_info)
 
     def snippet(self, info, content, opt):
         """
@@ -47,9 +47,9 @@ class Slack:
             'content': content
         }
 
-        requests.post(self.__postfile_api_url, params=snippet_api_info)
+        return requests.post(self.__postfile_api_url, params=snippet_api_info)
 
-    def channel(self, info):
+    def channels(self, info):
         """
         API Document:
         https://api.slack.com/methods/channels.list
@@ -61,9 +61,8 @@ class Slack:
 
         res = requests.get(self.__channel_list_api_url, params=channels_api_info)
 
-        json_data = res.json().get("channels")
-        for info in json_data:
-            print info.get("name") + " : " + info.get("id")
+        for d in res.json().get("channels"):
+            print d.get("name") + " : " + d.get("id")
 
     def history(self, info, count):
         history_api_info = {
@@ -74,8 +73,19 @@ class Slack:
 
         res = requests.get(self.__history_api_url, params=history_api_info)
 
-        for info in res.json().get("messages"):
-            print info.get("user") + " : " + info.get("text")
+        for d in res.json().get("messages"):
+            print d.get("user") + " : " + d.get("text")
+
+    def channel_name(self, info):
+
+        channels_api_info = {
+            'token': info.get('token')
+            }
+
+        res = requests.get(self.__channel_list_api_url, params=channels_api_info)
+        result = [d.get("name") for d in res.json().get("channels") if d.get("id") == info.get("channel")]
+        channel_name = "Unset Channel" if len(result) == 0 else result[0]
+        print channel_name
 
 
 def post(info, text):
@@ -90,9 +100,13 @@ def post_snippet(info, content, opt):
 
 def show_channels(info):
     """ Show SlackChannels  """
-    return Slack().channel(info)
+    return Slack().channels(info)
 
 
 def show_history(info, count):
     """ Show Channel History """
     return Slack().history(info, count)
+
+
+def get_channel_name(info):
+    return Slack().channel_name(info)

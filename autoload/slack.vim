@@ -21,8 +21,12 @@ endfunction
 pyfile <sfile>:h:h/slack.py
 python import vim
 
-function! slack#channel()
+function! slack#channels()
   python show_channels(vim.eval('s:Slack_info()'))
+endfunction
+
+function! slack#channel()
+    python get_channel_name(vim.eval('s:Slack_info()'))
 endfunction
 
 function! slack#history(args)
