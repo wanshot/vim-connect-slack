@@ -1,6 +1,6 @@
 vim-connect-slack
 ====================
-vim-connect-slack will run the SlackAPI form Vim
+vim-connect-slack will run the SlackAPI from Vim
 
 This Plugin is still BetaVersion
 
@@ -20,7 +20,7 @@ Example .vimrc
 =================
 Setting your vimrc
 
-    let g:Token = "Your Slack Token"   
+    let g:Token = "Your Slack Token"
     let g:Channnel = "Target Channel"
     let g:UserName = "Your Slack Username"
 
@@ -49,6 +49,12 @@ Commands
 * Show SlackChannels
 
   `:SlackChannels`
+
+
+* Show Current channel
+
+  `:Slackchannel`
+
 
 * Change Channel
 

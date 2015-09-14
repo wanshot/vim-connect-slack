@@ -3,15 +3,11 @@ import requests
 from vim import *
 
 
-class Slack:
+class SlackContribute:
 
     __post_api_url = 'https://slack.com/api/chat.postMessage'
     __postfile_api_url = 'https://slack.com/api/files.upload'
     __delete = 'https://slack.com/api/chat.delete'
-    __group_list_api_url = "https://slack.com/api/groups.list"
-    __channel_list_api_url = "https://slack.com/api/channels.list"
-    __history_api_url = "https://slack.com/api/channels.history"
-    __user_info_api_url = "https://slack.com/api/users.info"
 
     def __init__(self):
         pass
@@ -48,6 +44,24 @@ class Slack:
         }
 
         return requests.post(self.__postfile_api_url, params=snippet_api_info)
+
+
+def post(info, text):
+    """ Post """
+    return SlackContribute().post(info, text)
+
+
+def post_snippet(info, content, opt):
+    """ File Post """
+    return SlackContribute().snippet(info, content, opt)
+
+
+class SlackBrowse:
+    __group_list_api_url = "https://slack.com/api/groups.list"
+    __channel_list_api_url = "https://slack.com/api/channels.list"
+    __history_api_url = "https://slack.com/api/channels.history"
+    __user_info_api_url = "https://slack.com/api/users.info"
+    __users_list = "https://slack.com/api/users.list"
 
     def channels(self, info):
         """
@@ -88,25 +102,15 @@ class Slack:
         print channel_name
 
 
-def post(info, text):
-    """ Post """
-    return Slack().post(info, text)
-
-
-def post_snippet(info, content, opt):
-    """ File Post """
-    return Slack().snippet(info, content, opt)
-
-
 def show_channels(info):
     """ Show SlackChannels  """
-    return Slack().channels(info)
+    return SlackBrowse().channels(info)
 
 
 def show_history(info, count):
     """ Show Channel History """
-    return Slack().history(info, count)
+    return SlackBrowse().history(info, count)
 
 
 def get_channel_name(info):
-    return Slack().channel_name(info)
+    return SlackBrowse().channel_name(info)
