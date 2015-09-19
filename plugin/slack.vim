@@ -1,4 +1,4 @@
-" version: 0.9.1
+" version: 0.9.2
 " author : wan <one_kkm@icloud.com>
 " license: mit license
 
@@ -14,6 +14,7 @@ command! SlackChannels call slack#channels()
 command! -nargs=1 Slack call slack#slack(<f-args>)
 command! -nargs=+ SlackSnippet call slack#snippet(<f-args>)
 command! -nargs=1 SlackHistory call slack#history(<f-args>)
+command! TestCall call slack#sss()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

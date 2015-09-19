@@ -1,4 +1,4 @@
-" version: 0.9.1
+" version: 0.9.2
 " author : wan <one_kkm@icloud.com>
 " license: mit license
 
@@ -46,6 +46,11 @@ endfunction
 function! s:Action_snippet(args)
     python post_snippet(vim.eval('s:Slack_info()'), vim.eval('s:Selection()'), vim.eval('a:args'))
 endfunction
+
+function! slack#test()
+    python sss()
+endfunction
+
 
 let &cpo = s:save_cpo
 unlet s:save_cpo 
