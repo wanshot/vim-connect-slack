@@ -1,5 +1,6 @@
 # coding: utf-8
 import requests
+import codecs
 import vim
 
 
@@ -96,9 +97,9 @@ class SlackBrowse:
         res = requests.get(self.__channel_list_api_url, params=channels_api_info)
 
         if res.json().get("ok"):
-            with open("__SlackChannels__", "w") as f:
+            with codecs.open("__SlackChannels__", "w", "utf-8") as f:
                 for d in res.json().get("channels"):
-                    f.write('#' + d.get("name") + '\n')
+                    f.write('@' + "{0:<20}".format(d.get("name")) + ' ' + d.get("purpose")["value"][:60] + '...' + '\n')
         else:
             print "Setting Error. Plz refer to this URL 'https://api.slack.com/web'"
 

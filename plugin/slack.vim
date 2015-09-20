@@ -14,6 +14,7 @@ command! SlackChannels call slack#channels()
 command! -nargs=1 Slack call slack#slack(<f-args>)
 command! -nargs=+ SlackSnippet call slack#snippet(<f-args>)
 command! -nargs=1 SlackHistory call slack#history(<f-args>)
+command! SlackMode call slack#mode_change()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

@@ -91,7 +91,16 @@ endfunction
 function! s:SlackChannelsClose()
     if s:SlackChannelsBufferName('__SlackChannels__')
         quit
+        let deletefile = '__SlackChannels__'
+        call delete(deletefile)
     endif
+endfunction
+
+pyfile <sfile>:h:h/db.py
+python import vim
+
+function! slack#mode_change()
+    python mode_change()
 endfunction
 
 let &cpo = s:save_cpo
