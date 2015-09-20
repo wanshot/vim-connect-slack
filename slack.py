@@ -98,7 +98,7 @@ class SlackBrowse:
         if res.json().get("ok"):
             with open("__SlackChannels__", "w") as f:
                 for d in res.json().get("channels"):
-                    f.write(d.get("name") + '\n')
+                    f.write('#' + d.get("name") + '\n')
         else:
             print "Setting Error. Plz refer to this URL 'https://api.slack.com/web'"
 
@@ -109,10 +109,11 @@ class SlackBrowse:
             }
 
         res = requests.get(self.__channel_list_api_url, params=channels_api_info)
+        ch_name = ch.lstrip("#")
 
         if res.json().get("ok"):
             for d in res.json().get("channels"):
-                if ch == d.get("name"):
+                if ch_name == d.get("name"):
                     vim.command(':let g:Channel = "%s"' % d.get("id"))
         else:
             print "Choice Channel is None"

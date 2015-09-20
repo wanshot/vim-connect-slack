@@ -25,7 +25,7 @@ function! s:Slack_info() abort
 endfunction
 
 function! s:Slack_info_token() abort
-    if !exists('g:token')
+    if !exists('g:Token')
         return "Plz set the Token"
     endif
     return {'token': g:Token}
@@ -39,7 +39,7 @@ function! slack#channels()
 endfunction
 
 function! slack#channel()
-    python get_channel_name(vim.eval('s:Slack_info_token()'))
+    python get_channel_name(vim.eval('s:Slack_info()'))
 endfunction
 
 function! slack#history(args)
