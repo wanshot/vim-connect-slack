@@ -6,24 +6,27 @@ This Plugin is still BetaVersion
 
 Requirements
 =================
-* Python >= 2.7.9
-* requests
+* Vim == +python/dyn
+  * Python >= 2.7.9
+  * requests
+    
+       or
+    
+   * Python < 2.7.9
+   * requests <= 2.5.3   
 
-  or
-
-* Python < 2.7.9
-* requests <= 2.5.3   
 
 
-
-Example .vimrc
+Settings
 =================
-Setting your vimrc
+Plz set these to vimrc
 
     let g:Token = "Your Slack Token"
-    let g:Channnel = "Target Channel"
     let g:UserName = "Your Slack Username"
-
+    let g:Channnel = "Default Channel ID"
+    # Channel you can be set in the command
+    
+    
 
 Commands
 =================
@@ -56,9 +59,10 @@ Commands
   `:SlackChannel`
 
 
-* Change Channel
+* Set Channel
 
-   `:let Channel = "Target Channel ID"`
+   `:SlackChannels`  
+   * Enter button to select the channel list that is displayed
 
 
 
