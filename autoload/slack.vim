@@ -1,4 +1,4 @@
-" version: 0.9.2
+" version: 0.9.3
 " author : wan <one_kkm@icloud.com>
 " license: mit license
 
@@ -13,20 +13,33 @@ function! s:Selection() range
     return selected
 endfunction
 
-function! s:Slack_info()
+function! s:Slack_info() abort
+    if !exists('g:Token')
+        return "Plz set the Token"
+    elseif !exists('g:Channel')
+        return "Plz set The Channel"
+    elseif !exists('g:UserName')
+        return "Plz set the UserName"
+    endif
     return {'token': g:Token, 'channel': g:Channel, 'username': g:UserName}
 endfunction
 
+function! s:Slack_info_token() abort
+    if !exists('g:token')
+        return "Plz set the Token"
+    endif
+    return {'token': g:Token}
+endfunction
 
 pyfile <sfile>:h:h/slack.py
 python import vim
 
 function! slack#channels()
-  python show_channels(vim.eval('s:Slack_info()'))
+  python show_channels(vim.eval('s:Slack_info_token()'))
 endfunction
 
 function! slack#channel()
-    python get_channel_name(vim.eval('s:Slack_info()'))
+    python get_channel_name(vim.eval('s:Slack_info_token()'))
 endfunction
 
 function! slack#history(args)
@@ -47,10 +60,39 @@ function! s:Action_snippet(args)
     python post_snippet(vim.eval('s:Slack_info()'), vim.eval('s:Selection()'), vim.eval('a:args'))
 endfunction
 
-function! slack#test()
-    python sss()
+function! RenderSlackChannelsBuffer()
+    exe "new __SlackChannels__"
+    nnoremap <script> <silent> <buffer> <Enter> :call <sid>ChoiceChannel()<CR>
+    nnoremap <script> <silent> <buffer> q             :call <sid>SlackChannelsClose()<CR>
+    cabbrev  <script> <silent> <buffer> q             call <sid>SlackChannelsClose()
 endfunction
 
+
+function! s:ChoiceChannel()
+    let target_line = getline('.')
+    if exists("g:Channel")
+        unlet! g:Channel
+        python choice_channel(vim.eval('s:Slack_info_token()'), vim.eval('target_line'))
+        call s:SlackChannelsClose()
+   endif
+        python choice_channel(vim.eval('s:Slack_info_token()'), vim.eval('target_line'))
+        call s:SlackChannelsClose()
+endfunction
+
+function! s:SlackChannelsBufferName(name)
+    if bufwinnr(bufnr(a:name)) != -1
+        exe bufwinnr(bufnr(a:name)) . "wincmd w"
+        return 1
+    else
+        return 0
+    endif
+endfunction
+
+function! s:SlackChannelsClose()
+    if s:SlackChannelsBufferName('__SlackChannels__')
+        quit
+    endif
+endfunction
 
 let &cpo = s:save_cpo
 unlet s:save_cpo 

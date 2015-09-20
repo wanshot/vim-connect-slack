@@ -1,6 +1,6 @@
 # coding: utf-8
 import requests
-from vim import *
+import vim
 
 
 def exception(func):
@@ -22,9 +22,6 @@ class SlackContribute:
     __post_api_url = 'https://slack.com/api/chat.postMessage'
     __postfile_api_url = 'https://slack.com/api/files.upload'
     __delete = 'https://slack.com/api/chat.delete'
-
-    def __init__(self):
-        pass
 
     @exception
     def post(self, info, text):
@@ -64,12 +61,18 @@ class SlackContribute:
 
 def post(info, text):
     """ Post """
-    return SlackContribute().post(info, text)
+    if isinstance(info, dict):
+        return SlackContribute().post(info, text)
+    else:
+        print info
 
 
 def post_snippet(info, content, opt):
     """ File Post """
-    return SlackContribute().snippet(info, content, opt)
+    if isinstance(info, dict):
+        return SlackContribute().snippet(info, content, opt)
+    else:
+        print info
 
 
 class SlackBrowse:
@@ -93,10 +96,26 @@ class SlackBrowse:
         res = requests.get(self.__channel_list_api_url, params=channels_api_info)
 
         if res.json().get("ok"):
-            for d in res.json().get("channels"):
-                print d.get("name") + " : " + d.get("id")
+            with open("__SlackChannels__", "w") as f:
+                for d in res.json().get("channels"):
+                    f.write(d.get("name") + '\n')
         else:
             print "Setting Error. Plz refer to this URL 'https://api.slack.com/web'"
+
+    @exception
+    def choice_ch(self, info, ch):
+        channels_api_info = {
+            'token': info.get('token')
+            }
+
+        res = requests.get(self.__channel_list_api_url, params=channels_api_info)
+
+        if res.json().get("ok"):
+            for d in res.json().get("channels"):
+                if ch == d.get("name"):
+                    vim.command(':let g:Channel = "%s"' % d.get("id"))
+        else:
+            print "Choice Channel is None"
 
     @exception
     def history(self, info, count):
@@ -127,7 +146,7 @@ class SlackBrowse:
 
         res = requests.get(self.__channel_list_api_url, params=channels_api_info)
 
-        if res.json().get("pk"):
+        if res.json().get("ok"):
             result = [d.get("name") for d in res.json().get("channels") if d.get("id") == info.get("channel")]
             channel_name = "Unset Channel" if len(result) == 0 else result[0]
             print channel_name
@@ -137,14 +156,33 @@ class SlackBrowse:
 
 def show_channels(info):
     """ Show SlackChannels  """
-    return SlackBrowse().channels(info)
+    if isinstance(info, dict):
+        SlackBrowse().channels(info)
+        vim.command('call RenderSlackChannelsBuffer()')
+        vim.command('setlocal nomodifiable')
+    else:
+        print info
+
+
+def choice_channel(info, ch):
+    """ return SlackChannel-ID """
+    if isinstance(info, dict):
+        return SlackBrowse().choice_ch(info, ch)
+    else:
+        print info
 
 
 def show_history(info, count):
     """ Show Channel History """
-    return SlackBrowse().history(info, count)
+    if isinstance(info, dict):
+        return SlackBrowse().history(info, count)
+    else:
+        print info
 
 
 def get_channel_name(info):
     """ show Channel Name """
-    return SlackBrowse().channel_name(info)
+    if isinstance(info, dict):
+        return SlackBrowse().channel_name(info)
+    else:
+        print info
