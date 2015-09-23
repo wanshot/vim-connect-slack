@@ -141,7 +141,10 @@ class SlackBrowse:
                 user_list = Database().members(db_path)
                 for d in res.json().get("messages"):
                     name = [dic.get("name") for dic in user_list if dic.get("id") == d.get("user")]
-                    print name[0] + " : " + d.get("text")
+                    try:
+                        print name[0] + " : " + d.get("text")
+                    except IndexError:
+                        print "BOT" + " : " + d.get("text")
             else:
                 for d in res.json().get("messages"):
                     print d.get("user") + " : " + d.get("text")
