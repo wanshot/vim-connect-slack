@@ -95,7 +95,7 @@ class SlackBrowse:
 
         channels_api_info = {
             'token': info.get('token')
-            }
+        }
 
         res = requests.get(self.__channel_list_api_url, params=channels_api_info)
 
@@ -110,10 +110,10 @@ class SlackBrowse:
     def choice_ch(self, info, ch):
         channels_api_info = {
             'token': info.get('token')
-            }
+        }
 
         res = requests.get(self.__channel_list_api_url, params=channels_api_info)
-        ch_name = ch.lstrip("#")
+        ch_name = ch[1:20].strip()
 
         if res.json().get("ok"):
             for d in res.json().get("channels"):
@@ -141,7 +141,7 @@ class SlackBrowse:
                 user_list = Database().members(db_path)
                 for d in res.json().get("messages"):
                     name = [dic.get("name") for dic in user_list if dic.get("id") == d.get("user")]
-                    print name[0] + ":" + d.get("text")
+                    print name[0] + " : " + d.get("text")
             else:
                 for d in res.json().get("messages"):
                     print d.get("user") + " : " + d.get("text")
