@@ -65,6 +65,16 @@ Commands
    * Enter button to select the channel list that is displayed
 
 
+* Need more FastResponse?
+
+  You can increase the Response by using the SlackMode
+  
+  `:SlackMode`
+  
+  SlackMode caches the information of API inside
+  
+  When information of the slack has been updated please run the SlackMode
+
 
 License
 =================
