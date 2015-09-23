@@ -107,20 +107,23 @@ class SlackBrowse:
             print "Setting Error. Plz refer to this URL 'https://api.slack.com/web'"
 
     @exception
-    def choice_ch(self, info, ch):
+    def choice_ch(self, info, ch, db_path):
         channels_api_info = {
             'token': info.get('token')
         }
-
-        res = requests.get(self.__channel_list_api_url, params=channels_api_info)
         ch_name = ch[1:20].strip()
-
-        if res.json().get("ok"):
-            for d in res.json().get("channels"):
-                if ch_name == d.get("name"):
-                    vim.command(':let g:Channel = "%s"' % d.get("id"))
+        if os.path.isfile(db_path + "/slack_data.db"):
+            channel_list = Database().channels(db_path)
+            channel_id = [d.get("id") for d in channel_list if d.get("name") == ch_name]
+            vim.command(':let g:Channel = "%s"' % channel_id[0])
         else:
-            print "Choice Channel is None"
+            res = requests.get(self.__channel_list_api_url, params=channels_api_info)
+            if res.json().get("ok"):
+                for d in res.json().get("channels"):
+                    if ch_name == d.get("name"):
+                        vim.command(':let g:Channel = "%s"' % d.get("id"))
+            else:
+                print "Choice Channel is None"
 
     @exception
     def history(self, info, count, db_path):
@@ -178,10 +181,10 @@ def show_channels(info):
         print info
 
 
-def choice_channel(info, ch):
+def choice_channel(info, ch, db_path):
     """ return SlackChannel-ID """
     if isinstance(info, dict):
-        return SlackBrowse().choice_ch(info, ch)
+        return SlackBrowse().choice_ch(info, ch, db_path)
     else:
         print info
 

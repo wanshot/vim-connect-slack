@@ -75,10 +75,10 @@ function! s:ChoiceChannel()
     let target_line = getline('.')
     if exists("g:Channel")
         unlet! g:Channel
-        python choice_channel(vim.eval('s:Slack_info_token()'), vim.eval('target_line'))
+        python choice_channel(vim.eval('s:Slack_info_token()'), vim.eval('target_line'), vim.eval('s:script_dir'))
         call s:SlackChannelsClose()
    endif
-        python choice_channel(vim.eval('s:Slack_info_token()'), vim.eval('target_line'))
+        python choice_channel(vim.eval('s:Slack_info_token()'), vim.eval('target_line'), vim.eval('s:script_dir'))
         call s:SlackChannelsClose()
 endfunction
 
