@@ -1,7 +1,10 @@
 # coding: utf-8
-import requests
-import codecs
+import os
 import vim
+import time
+import codecs
+import shelve
+import requests
 
 
 def exception(func):
@@ -120,7 +123,7 @@ class SlackBrowse:
             print "Choice Channel is None"
 
     @exception
-    def history(self, info, count):
+    def history(self, info, count, db_path):
         """
         API Document
         https://api.slack.com/methods/channels.history
@@ -134,8 +137,14 @@ class SlackBrowse:
         res = requests.get(self.__history_api_url, params=history_api_info)
 
         if res.json().get("ok"):
-            for d in res.json().get("messages"):
-                print d.get("user") + " : " + d.get("text")
+            if os.path.isfile(db_path + "/slack_data.db"):
+                user_list = Database().members(db_path)
+                for d in res.json().get("messages"):
+                    name = [dic.get("name") for dic in user_list if dic.get("id") == d.get("user")]
+                    print name[0] + ":" + d.get("text")
+            else:
+                for d in res.json().get("messages"):
+                    print d.get("user") + " : " + d.get("text")
         else:
             print "Setting Error. Plz refer to this URL https://api.slack.com/web'"
 
@@ -174,10 +183,10 @@ def choice_channel(info, ch):
         print info
 
 
-def show_history(info, count):
+def show_history(info, count, db_path):
     """ Show Channel History """
     if isinstance(info, dict):
-        return SlackBrowse().history(info, count)
+        return SlackBrowse().history(info, count, db_path)
     else:
         print info
 
@@ -188,3 +197,54 @@ def get_channel_name(info):
         return SlackBrowse().channel_name(info)
     else:
         print info
+
+
+class Database:
+
+    __users_list_api = "https://slack.com/api/users.list"
+    __channels_list_api = "https://slack.com/api/channels.list"
+
+    def mode_on(self, autoload_path, info):
+        """
+        Running Mode On and checks the existence of DB , creating DB
+        If the database exists, it will insert the API Data
+        """
+        if isinstance(info, dict):
+
+            if os.path.isfile(autoload_path + "/slack_data.db"):
+                os.remove(autoload_path + "/slack_data.db")
+            else:
+                pass
+
+            db = shelve.open(autoload_path + '/slack_data')
+            try:
+                db["ml"] = _get_member_list(self.__users_list_api, info)
+                time.sleep(1)
+                db["cl"] = _get_channel_list(self.__channels_list_api, info)
+            finally:
+                db.close()
+                print "SlackMode Enable"
+        else:
+            print info
+
+    def members(self, autoload_path):
+        """ Get members """
+        db = shelve.open(autoload_path + '/slack_data')
+        return db["ml"]
+
+    def channels(self, autoload_path):
+        """ Get Channels """
+        db = shelve.open(autoload_path + '/slack_data')
+        return db["cl"]
+
+
+def _get_member_list(url, info):
+    """ Get [{"id":user_id, "name":user_name}...] """
+    res = requests.get(url, params=info)
+    return [{"id": d.get("id"), "name": d.get("name")} for d in res.json().get("members")]
+
+
+def _get_channel_list(url, info):
+    """ Get [{"id":channel_id, "name":channel_name}...] """
+    res = requests.get(url, params=info)
+    return [{"id": d.get("id"), "name": d.get("name")} for d in res.json().get("channels")]

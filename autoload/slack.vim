@@ -1,9 +1,11 @@
-" version: 0.9.3
+" version: 0.9.4
 " author : wan <one_kkm@icloud.com>
 " license: mit license
 
 let s:save_cpo = &cpo
 set cpo&vim
+
+let s:script_dir = expand('<sfile>:p:h')
 
 function! s:Selection() range
     let tmp = @@
@@ -31,6 +33,7 @@ function! s:Slack_info_token() abort
     return {'token': g:Token}
 endfunction
 
+
 pyfile <sfile>:h:h/slack.py
 python import vim
 
@@ -43,7 +46,7 @@ function! slack#channel()
 endfunction
 
 function! slack#history(args)
-  python show_history(vim.eval('s:Slack_info()'), vim.eval('a:args'))
+  python show_history(vim.eval('s:Slack_info()'), vim.eval('a:args'), vim.eval('s:script_dir'))
 endfunction
 
 function! slack#slack(args)
@@ -96,11 +99,8 @@ function! s:SlackChannelsClose()
     endif
 endfunction
 
-pyfile <sfile>:h:h/db.py
-python import vim
-
 function! slack#mode_change()
-    python mode_change()
+    python Database().mode_on(vim.eval('s:script_dir'), vim.eval('s:Slack_info_token()'))
 endfunction
 
 let &cpo = s:save_cpo
