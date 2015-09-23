@@ -32,44 +32,45 @@ Commands
 =================
 
 * POST Message
-
-  `:Slack "Message"`
-
+        
+        :Slack "Message"
+        
+         
 * POST Snippet
    
   Range selection change to the visual mode  
   
-  `:SlackSnippet {FileType} {Title}`
+        :SlackSnippet {FileType} {Title}
   * Default FileType is "Python"
   * Default Title is "None"
 
 * Show Channel History
 
-  `:SlackHistory {Count}`
-  * Count is int
+        :SlackHistory {Number of Display}
  
 
 * Show SlackChannels
 
-  `:SlackChannels`
+        :SlackChannels
 
-
+        
 * Show Current channel
 
-  `:SlackChannel`
+        :SlackChannel
 
 
 * Set Channel
 
-   `:SlackChannels`  
+        :SlackChannels
    * Enter button to select the channel list that is displayed
 
 
-* Need more FastResponse?
+Need more FastResponse?
+=========================
 
-  You can increase the Response by using the SlackMode
-  
-  `:SlackMode`
+You can increase the Response by using the SlackMode
+
+    :SlackMode
   
   SlackMode caches the information of API inside
   
