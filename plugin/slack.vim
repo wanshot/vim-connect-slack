@@ -9,7 +9,7 @@ let g:loaded_slack = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
-command! SlackChannel call slack#channel()
+command! SlackChannel call slack#Call_channel_name()
 command! SlackChannels call slack#channels()
 command! -nargs=1 Slack call slack#slack(<f-args>)
 command! -nargs=+ SlackSnippet call slack#snippet(<f-args>)

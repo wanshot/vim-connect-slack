@@ -41,8 +41,14 @@ function! s:Slack_info_channel() abort
 endfunction 
 
 function! s:Set_ch_name()
-    let g:ChannelName = "init_name"
+    if !exists('g:ChannelName')
+        let g:ChannelName = "Not set"
+    endif
     return g:ChannelName
+endfunction
+
+function! slack#Call_channel_name()
+    echo s:Set_ch_name()
 endfunction
 
 pyfile <sfile>:h:h/slack.py
@@ -55,10 +61,6 @@ function! slack#channels()
   \   vim.eval('s:Slack_info_channel()'),
   \   vim.eval('s:Set_ch_name()')
   \   )
-endfunction
-
-function! slack#channel()
-    python get_channel_name(vim.eval('s:Slack_info()'))
 endfunction
 
 function! slack#history(args)
@@ -128,7 +130,10 @@ function! s:SlackChannelsClose()
 endfunction
 
 function! slack#mode_change()
-    python Database().mode_on(vim.eval('s:script_dir'), vim.eval('s:Slack_info_token()'))
+    python Database().mode_on(
+    \   vim.eval('s:script_dir'),
+    \   vim.eval('s:Slack_info_token()')
+    \   )
 endfunction
 
 let &cpo = s:save_cpo

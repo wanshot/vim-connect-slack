@@ -86,7 +86,6 @@ class SlackBrowse:
     __user_info_api_url = "https://slack.com/api/users.info"
     __users_list = "https://slack.com/api/users.list"
 
-    @exception
     def channels(self, info, db_path, ch_id, ch_name):
         """
         API Document:
@@ -94,41 +93,27 @@ class SlackBrowse:
         """
 
         line = 0
+        channel_list = Database().channels(db_path)
 
-        if os.path.isfile(db_path + "/slack_data.db"):
-            channel_list = Database().channels(db_path)
-            with codecs.open("__SlackChannels__", "w", "utf-8") as f:
-                for i, d in enumerate(channel_list):
-                    if d.get("id") == ch_id:
-                        line = i
-                        ch_name = d.get("name")
-                    if d.get("purpose"):
-                        f.write("@" + "{0:<20}".format(d.get("name")) + "#" + " " + d.get("purpose")[:60] + "\n")
-                    else:
-                        f.write("@" + "{0:<20}".format(d.get("name")) + "#" + "\n")
-        else:
-            print 'Plz run the "SlackMode"'
+        with codecs.open("__SlackChannels__", "w", "utf-8") as f:
+            for i, d in enumerate(channel_list):
+                if d.get("id") == ch_id:
+                    line = i
+                    ch_name = d.get("name")
+                if d.get("purpose"):
+                    f.write("@" + "{0:<20}".format(d.get("name")) + "#" + " " + d.get("purpose")[:60] + "\n")
+                else:
+                    f.write("@" + "{0:<20}".format(d.get("name")) + "#" + "\n")
         return line, ch_name
 
-    @exception
     def choice_ch(self, info, ch, db_path):
-        channels_api_info = {
-            'token': info.get('token')
-        }
-        ch_name = ch[1:20].strip()
 
-        if os.path.isfile(db_path + "/slack_data.db"):
-            channel_list = Database().channels(db_path)
-            channel_id = [d.get("id") for d in channel_list if d.get("name") == ch_name]
-            vim.command(':let g:Channel = "%s"' % channel_id[0])
-        else:
-            res = requests.get(self.__channel_list_api_url, params=channels_api_info)
-            if res.json().get("ok"):
-                for d in res.json().get("channels"):
-                    if ch_name == d.get("name"):
-                        vim.command(':let g:Channel = "%s"' % d.get("id"))
-            else:
-                print "Choice Channel is None"
+        ch_name = ch[1:20].strip()
+        channel_list = Database().channels(db_path)
+        channel_id = [d.get("id") for d in channel_list if d.get("name") == ch_name]
+
+        vim.command(':let g:Channel = "%s"' % channel_id[0])
+        vim.command(':let g:ChannelName = "%s"' % ch_name)
 
     @exception
     def history(self, info, count, db_path):
@@ -159,59 +144,46 @@ class SlackBrowse:
         else:
             print "Setting Error. Plz refer to this URL https://api.slack.com/web'"
 
-    @exception
-    def channel_name(self, info):
-
-        channels_api_info = {
-            'token': info.get('token')
-            }
-
-        res = requests.get(self.__channel_list_api_url, params=channels_api_info)
-
-        if res.json().get("ok"):
-            result = [d.get("name") for d in res.json().get("channels") if d.get("id") == info.get("channel")]
-            channel_name = "Unset Channel" if len(result) == 0 else result[0]
-            print channel_name
-        else:
-            print "Setting Error. Plz refer to this URL https://api.slack.com/web'"
-
 
 def show_channels(info, db_path, ch_id, ch_name):
-    """ Show SlackChannels  """
-    if isinstance(info, dict):
-        (line_num, ch_name) = SlackBrowse().channels(info, db_path, ch_id, ch_name)
-        vim.command('call RenderSlackChannelsBuffer()')
-        vim.command('setlocal nomodifiable')
-        vim.command('sign define channel text=>> texthl=Search')
-        vim.command('let g:ChannelName = "{}"'.format(ch_name))
-        if line_num == 0:
-            pass
+    """
+    Show SlackChannels
+    Available in SlackMode
+    """
+    if os.path.isfile(db_path + "/slack_data.db"):
+        if isinstance(info, dict):
+            (line_num, ch_name) = SlackBrowse().channels(info, db_path, ch_id, ch_name)
+            vim.command('call RenderSlackChannelsBuffer()')
+            vim.command('setlocal nomodifiable')
+            vim.command('sign define channel text=>> texthl=Search')
+            if line_num == 0:
+                pass
+            else:
+                vim.command('exe ":sign place 2 line={} name=channel file=" . expand("%:p")'.format(line_num + 1))
         else:
-            vim.command('exe ":sign place 2 line={} name=channel file=" . expand("%:p")'.format(line_num + 1))
+            print info
     else:
-        print info
+        print 'Plz run the "SlackMode"'
 
 
 def choice_channel(info, ch, db_path):
-    """ return SlackChannel-ID """
-    if isinstance(info, dict):
-        return SlackBrowse().choice_ch(info, ch, db_path)
+    """
+    return SlackChannel-ID
+    Available in SlackMode
+    """
+    if os.path.isfile(db_path + "/slack_data.db"):
+        if isinstance(info, dict):
+            return SlackBrowse().choice_ch(info, ch, db_path)
+        else:
+            print info
     else:
-        print info
+        print 'Plz run the "SlackMode"'
 
 
 def show_history(info, count, db_path):
     """ Show Channel History """
     if isinstance(info, dict):
         return SlackBrowse().history(info, count, db_path)
-    else:
-        print info
-
-
-def get_channel_name(info):
-    """ show Channel Name """
-    if isinstance(info, dict):
-        return SlackBrowse().channel_name(info)
     else:
         print info
 
@@ -245,12 +217,12 @@ class Database:
             print info
 
     def members(self, autoload_path):
-        """ Get members """
+        """ load members """
         db = shelve.open(autoload_path + '/slack_data')
         return db["ml"]
 
     def channels(self, autoload_path):
-        """ Get Channels """
+        """ Load Channels """
         db = shelve.open(autoload_path + '/slack_data')
         return db["cl"]
 
@@ -264,8 +236,9 @@ def _get_member_list(url, info):
 def _get_channel_list(url, info):
     """ Get [{"id":channel_id, "name":channel_name, "purpose":purpose}...] """
     res = requests.get(url, params=info)
-    return [{
-        "id": d.get("id"),
-        "name": d.get("name"),
-        "purpose": d.get("purpose")["value"]
+    return [
+        {
+            "id": d.get("id"),
+            "name": d.get("name"),
+            "purpose": d.get("purpose")["value"]
         } for d in res.json().get("channels")]
