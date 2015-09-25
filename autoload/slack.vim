@@ -17,28 +17,44 @@ endfunction
 
 function! s:Slack_info() abort
     if !exists('g:Token')
-        return "Plz set the Token"
+        return "Plz set Token"
     elseif !exists('g:Channel')
-        return "Plz set The Channel"
+        return "Plz set Channel"
     elseif !exists('g:UserName')
-        return "Plz set the UserName"
+        return "Plz set UserName"
     endif
     return {'token': g:Token, 'channel': g:Channel, 'username': g:UserName}
 endfunction
 
 function! s:Slack_info_token() abort
     if !exists('g:Token')
-        return "Plz set the Token"
+        return "Plz set Token"
     endif
     return {'token': g:Token}
 endfunction
 
+function! s:Slack_info_channel() abort
+    if !exists('g:Channel')
+        return "init_ch"
+    endif
+    return g:Channel
+endfunction 
+
+function! s:Set_ch_name()
+    let g:ChannelName = "init_name"
+    return g:ChannelName
+endfunction
 
 pyfile <sfile>:h:h/slack.py
 python import vim
 
 function! slack#channels()
-  python show_channels(vim.eval('s:Slack_info_token()'))
+  python show_channels(
+  \   vim.eval('s:Slack_info_token()'),
+  \   vim.eval('s:script_dir'),
+  \   vim.eval('s:Slack_info_channel()'),
+  \   vim.eval('s:Set_ch_name()')
+  \   )
 endfunction
 
 function! slack#channel()
@@ -46,7 +62,10 @@ function! slack#channel()
 endfunction
 
 function! slack#history(args)
-  python show_history(vim.eval('s:Slack_info()'), vim.eval('a:args'), vim.eval('s:script_dir'))
+  python show_history(
+  \   vim.eval('s:Slack_info()'),
+  \   vim.eval('a:args'),
+  \   vim.eval('s:script_dir'))
 endfunction
 
 function! slack#slack(args)
@@ -66,6 +85,7 @@ endfunction
 function! RenderSlackChannelsBuffer()
     exe "new __SlackChannels__"
     nnoremap <script> <silent> <buffer> <Enter> :call <sid>ChoiceChannel()<CR>
+    exe ":sign unplace 2 file=" . expand("%:p")
     nnoremap <script> <silent> <buffer> q             :call <sid>SlackChannelsClose()<CR>
     cabbrev  <script> <silent> <buffer> q             call <sid>SlackChannelsClose()
 endfunction
@@ -75,10 +95,18 @@ function! s:ChoiceChannel()
     let target_line = getline('.')
     if exists("g:Channel")
         unlet! g:Channel
-        python choice_channel(vim.eval('s:Slack_info_token()'), vim.eval('target_line'), vim.eval('s:script_dir'))
+        python choice_channel(
+        \   vim.eval('s:Slack_info_token()'),
+        \   vim.eval('target_line'),
+        \   vim.eval('s:script_dir')
+        \   )
         call s:SlackChannelsClose()
    endif
-        python choice_channel(vim.eval('s:Slack_info_token()'), vim.eval('target_line'), vim.eval('s:script_dir'))
+        python choice_channel(
+        \   vim.eval('s:Slack_info_token()'),
+        \   vim.eval('target_line'),
+        \   vim.eval('s:script_dir')
+        \   )
         call s:SlackChannelsClose()
 endfunction
 
