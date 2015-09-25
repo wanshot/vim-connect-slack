@@ -23,10 +23,20 @@ Plz set these to vimrc
 
     let g:Token = "Your Slack Token"
     let g:UserName = "Your Slack Username"
-    let g:Channnel = "Default Channel ID"
-    # Channel you can be set in the command
     
     
+
+Usage
+=================
+
+Please be the first to run the SlackMode To use the vim-connect-slack
+
+    :SlackMode
+  
+  SlackMode caches the information of API inside
+  
+  When information of the slack has been updated please run the SlackMode
+
 
 Commands
 =================
@@ -46,7 +56,7 @@ Commands
 
 * Show Channel History
 
-        :SlackHistory {Number of Display}
+        :SlackHistory {Limit}
  
 
 * Show SlackChannels
@@ -63,18 +73,6 @@ Commands
 
         :SlackChannels
    * Enter button to select the channel list that is displayed
-
-
-Need more FastResponse?
-=========================
-
-You can increase the Response by using the SlackMode
-
-    :SlackMode
-  
-  SlackMode caches the information of API inside
-  
-  When information of the slack has been updated please run the SlackMode
 
 
 License
