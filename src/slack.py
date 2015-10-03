@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import print_function
 import os
 import vim
 import time
@@ -13,11 +14,11 @@ def exception(func):
         try:
             return func(*args, **kwargs)
         except requests.exceptions.ConnectionError:
-            print "ConnectionError"
+            print ("ConnectionError")
         except requests.exceptions.Timeout:
-            print "Timeout"
+            print ("Timeout")
         except requests.exceptions.HTTPError:
-            print "HTTPError"
+            print ("HTTPError")
     return wrapper
 
 
@@ -68,7 +69,7 @@ def post(info, text):
     if isinstance(info, dict):
         return SlackContribute().post(info, text)
     else:
-        print info
+        print (info)
 
 
 def post_snippet(info, content, opt):
@@ -76,7 +77,7 @@ def post_snippet(info, content, opt):
     if isinstance(info, dict):
         return SlackContribute().snippet(info, content, opt)
     else:
-        print info
+        print (info)
 
 
 class SlackBrowse:
@@ -135,14 +136,14 @@ class SlackBrowse:
                 for d in res.json().get("messages"):
                     name = [dic.get("name") for dic in user_list if dic.get("id") == d.get("user")]
                     try:
-                        print name[0] + " : " + d.get("text")
+                        print (name[0] + " : " + d.get("text"))
                     except IndexError:
-                        print "BOT" + " : " + d.get("text")
+                        print ("BOT" + " : " + d.get("text"))
             else:
                 for d in res.json().get("messages"):
-                    print d.get("user") + " : " + d.get("text")
+                    print (d.get("user") + " : " + d.get("text"))
         else:
-            print "Setting Error. Plz refer to this URL https://api.slack.com/web'"
+            print ("Setting Error. Plz refer to this URL https://api.slack.com/web'")
 
 
 def show_channels(info, db_path, ch_id, ch_name):
@@ -161,9 +162,9 @@ def show_channels(info, db_path, ch_id, ch_name):
             else:
                 vim.command('exe ":sign place 2 line={} name=channel file=" . expand("%:p")'.format(line_num + 1))
         else:
-            print info
+            print (info)
     else:
-        print 'Plz run the "SlackMode"'
+        print ('Plz run the "SlackMode"')
 
 
 def choice_channel(info, ch, db_path):
@@ -175,9 +176,9 @@ def choice_channel(info, ch, db_path):
         if isinstance(info, dict):
             return SlackBrowse().choice_ch(info, ch, db_path)
         else:
-            print info
+            print (info)
     else:
-        print 'Plz run the "SlackMode"'
+        print ('Plz run the "SlackMode"')
 
 
 def show_history(info, count, db_path):
@@ -185,7 +186,7 @@ def show_history(info, count, db_path):
     if isinstance(info, dict):
         return SlackBrowse().history(info, count, db_path)
     else:
-        print info
+        print (info)
 
 
 class Database:
@@ -212,9 +213,9 @@ class Database:
                 db["cl"] = _get_channel_list(self.__channels_list_api, info)
             finally:
                 db.close()
-                print "SlackMode Enable"
+                print ("SlackMode Enable")
         else:
-            print info
+            print (info)
 
     def members(self, autoload_path):
         """ load members """

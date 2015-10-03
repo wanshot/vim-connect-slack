@@ -51,7 +51,7 @@ function! slack#Call_channel_name()
     echo s:Set_ch_name()
 endfunction
 
-pyfile <sfile>:h:h/slack.py
+pyfile <sfile>:h:h/src/slack.py
 python import vim
 
 function! slack#channels()
@@ -81,7 +81,10 @@ function! slack#snippet(args, ...)
 endfunction
 
 function! s:Action_snippet(args)
-    python post_snippet(vim.eval('s:Slack_info()'), vim.eval('s:Selection()'), vim.eval('a:args'))
+    python post_snippet(
+    \   vim.eval('s:Slack_info()'),
+    \   vim.eval('s:Selection()'),
+    \   vim.eval('a:args'))
 endfunction
 
 function! RenderSlackChannelsBuffer()
@@ -135,6 +138,7 @@ function! slack#mode_change()
     \   vim.eval('s:Slack_info_token()')
     \   )
 endfunction
+
 
 let &cpo = s:save_cpo
 unlet s:save_cpo 
