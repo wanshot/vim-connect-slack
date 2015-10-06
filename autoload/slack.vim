@@ -133,12 +133,11 @@ function! s:SlackChannelsClose()
 endfunction
 
 function! slack#mode_change()
-    python Database().mode_on(
+    python SlackORM().mode_on(
     \   vim.eval('s:script_dir'),
     \   vim.eval('s:Slack_info_token()')
     \   )
 endfunction
-
 
 let &cpo = s:save_cpo
 unlet s:save_cpo 
